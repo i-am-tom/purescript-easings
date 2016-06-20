@@ -46,5 +46,23 @@ cubicBoth start end progress = if inAdjusted < 1.0
   where inAdjusted  = progress * 2.0
         outAdjusted = inAdjusted - 2.0
 
-invert :: Easing -> Easing
-invert f start end = f start end <<< (-) 1.0
+-- Quartic easings.
+
+quarticIn :: Easing
+quarticIn start end = (+) start
+  <<< (*) (end - start)
+  <<< (flip pow $ 4.0)
+
+quarticOut :: Easing
+quarticOut start end = (+) start
+  <<< (*) (start - end)
+  <<< (flip (-) $ 1.0)
+  <<< (flip pow $ 4.0)
+  <<< (flip (-) $ 1.0)
+
+quarticBoth :: Easing
+quarticBoth start end progress = if inAdjusted < 1.0
+    then start + (end - start) / 2.0 * (pow inAdjusted 4.0)
+    else start + (start - end) / 2.0 * ((pow outAdjusted 4.0) - 2.0)
+  where inAdjusted  = progress * 2.0
+        outAdjusted = inAdjusted - 2.0
