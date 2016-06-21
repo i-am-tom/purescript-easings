@@ -9,6 +9,10 @@ type Progress = Number
 
 type Easing = Start -> End -> Progress -> Number
 
+infix 9 pow as ^
+
+-- Plain, linear easing.
+
 linear :: Easing
 linear start end = (+) start
   <<< (*) (end - start)
@@ -23,14 +27,13 @@ quadIn start end = (+) start
 quadOut :: Easing
 quadOut start end = (+) start
   <<< (*) (start - end)
-  <<< (flip (-) $ 1.0)
-  <<< (flip pow $ 2.0)
-  <<< (flip (-) $ 1.0)
+  <<< \p -> p * (p - 2.0)
 
 quadBoth :: Easing
-quadBoth start end progress = if progress < 0.5
-  then quadIn start end progress
-  else quadOut start end progress
+quadBoth start end progress =
+  start + (end - start) * if progress < 0.5
+    then 2.0 * progress ^ 2.0
+    else 1.0 - 2.0 * (progress - 1.0) ^ 2.0
 
 -- Cubic easings.
 
@@ -40,15 +43,15 @@ cubicIn start end = (+) start
   <<< (flip pow $ 3.0)
 
 cubicOut :: Easing
-cubicOut start end progress = start + (end - start) * ((pow adjusted 3.0) + 1.0)
-  where adjusted = progress - 1.0
+cubicOut start end = (+) start
+  <<< (*) (end - start)
+  <<< \p -> (p - 1.0) ^ 3.0 + 1.0
 
 cubicBoth :: Easing
-cubicBoth start end progress = if inAdjusted < 1.0
-    then start + (end - start) / 2.0 * (pow inAdjusted 3.0)
-    else start + (end - start) / 2.0 * ((pow outAdjusted 3.0) + 2.0)
-  where inAdjusted  = progress * 2.0
-        outAdjusted = inAdjusted - 2.0
+cubicBoth start end progress =
+  start + (end - start) / 2.0 * if progress < 0.5
+    then (progress * 2.0) ^ 3.0
+    else (progress * 2.0 - 2.0) ^ 3.0 + 2.0
 
 -- Quartic easings.
 
@@ -60,13 +63,10 @@ quarticIn start end = (+) start
 quarticOut :: Easing
 quarticOut start end = (+) start
   <<< (*) (start - end)
-  <<< (flip (-) $ 1.0)
-  <<< (flip pow $ 4.0)
-  <<< (flip (-) $ 1.0)
+  <<< \p -> (p - 1.0) ^ 4.0 - 1.0
 
 quarticBoth :: Easing
-quarticBoth start end progress = if inAdjusted < 1.0
-    then start + (end - start) / 2.0 * (pow inAdjusted 4.0)
-    else start + (start - end) / 2.0 * ((pow outAdjusted 4.0) - 2.0)
-  where inAdjusted  = progress * 2.0
-        outAdjusted = inAdjusted - 2.0
+quarticBoth start end progress =
+  start + (end - start) / 2.0 * if progress < 0.5
+    then (progress * 2.0) ^ 4.0
+    else 2.0 - (progress * 2.0 - 2.0) ^ 4.0
