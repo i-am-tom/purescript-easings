@@ -11,62 +11,17 @@ type Easing = Start -> End -> Progress -> Number
 
 infix 9 pow as ^
 
--- Plain, linear easing.
+-- Exponential easings.
 
-linear :: Easing
-linear start end = (+) start
-  <<< (*) (end - start)
+exponentialIn :: Number -> Easing
+exponentialIn power start end progress =
+  progress ^ power * (end - start) + start
 
--- Quadratic easings.
+exponentialOut :: Number -> Easing
+exponentialOut power start end progress =
+  exponentialIn power end start (1.0 - progress)
 
-quadIn :: Easing
-quadIn start end = (+) start
-  <<< (*) (end - start)
-  <<< (flip pow $ 2.0)
-
-quadOut :: Easing
-quadOut start end = (+) start
-  <<< (*) (start - end)
-  <<< \p -> p * (p - 2.0)
-
-quadBoth :: Easing
-quadBoth start end progress =
-  start + (end - start) * if progress < 0.5
-    then 2.0 * progress ^ 2.0
-    else 1.0 - 2.0 * (progress - 1.0) ^ 2.0
-
--- Cubic easings.
-
-cubicIn :: Easing
-cubicIn start end = (+) start
-  <<< (*) (end - start)
-  <<< (flip pow $ 3.0)
-
-cubicOut :: Easing
-cubicOut start end = (+) start
-  <<< (*) (end - start)
-  <<< \p -> (p - 1.0) ^ 3.0 + 1.0
-
-cubicBoth :: Easing
-cubicBoth start end progress =
-  start + (end - start) / 2.0 * if progress < 0.5
-    then (progress * 2.0) ^ 3.0
-    else (progress * 2.0 - 2.0) ^ 3.0 + 2.0
-
--- Quartic easings.
-
-quarticIn :: Easing
-quarticIn start end = (+) start
-  <<< (*) (end - start)
-  <<< (flip pow $ 4.0)
-
-quarticOut :: Easing
-quarticOut start end = (+) start
-  <<< (*) (start - end)
-  <<< \p -> (p - 1.0) ^ 4.0 - 1.0
-
-quarticBoth :: Easing
-quarticBoth start end progress =
-  start + (end - start) / 2.0 * if progress < 0.5
-    then (progress * 2.0) ^ 4.0
-    else 2.0 - (progress * 2.0 - 2.0) ^ 4.0
+exponentialBoth :: Number -> Easing
+exponentialBoth power start end progress = if progress < 0.5
+  then exponentialIn power start (end / 2.0) (progress * 2.0)
+  else exponentialOut power ((start + end) / 2.0) end (2.0 * progress - 1.0)
