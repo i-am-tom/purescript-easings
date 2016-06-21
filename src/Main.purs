@@ -10,7 +10,8 @@ type Progress = Number
 type Easing = Start -> End -> Progress -> Number
 
 linear :: Easing
-linear start end = (+) start <<< (*) (end - start)
+linear start end = (+) start
+  <<< (*) (end - start)
 
 -- Quadratic easings.
 
@@ -20,13 +21,16 @@ quadIn start end = (+) start
   <<< (flip pow $ 2.0)
 
 quadOut :: Easing
-quadOut start end progress = start + (start - end) * progress * (progress - 2.0)
+quadOut start end = (+) start
+  <<< (*) (start - end)
+  <<< (flip (-) $ 1.0)
+  <<< (flip pow $ 2.0)
+  <<< (flip (-) $ 1.0)
 
 quadBoth :: Easing
-quadBoth start end progress = if adjusted < 1.0
-    then start + (end - start) / 2.0 * (pow adjusted 2.0)
-    else start + (start - end) / 2.0 * ((pow (adjusted - 2.0) 2.0) - 2.0)
-  where adjusted = progress * 2.0
+quadBoth start end progress = if progress < 0.5
+  then quadIn start end progress
+  else quadOut start end progress
 
 -- Cubic easings.
 
