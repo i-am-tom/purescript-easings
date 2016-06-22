@@ -1,8 +1,16 @@
 module Test.Main where
 
 import Prelude
-import Main (sine, out, polynomial, inAndOut)
 import Math as M
+
+import Main
+  ( circular
+  , exponential
+  , inAndOut
+  , out
+  , polynomial
+  , sine
+  )
 
 import Test.Unit (suite, test)
 import Test.Unit.Main (runTest)
@@ -50,7 +58,7 @@ main = runTest do
       Assert.equal 0.6561 <<< round $ polynomial 4.0 0.0 1.0 0.9
       Assert.equal 1.0 <<< round $ polynomial 4.0 0.0 1.0 1.0
 
-    test "inverse polynomial" do
+    test "inverse" do
       Assert.equal 0.0 <<< round $ out (polynomial 2.0) 0.0 1.0 0.0
       Assert.equal 0.19 <<< round $ out (polynomial 2.0) 0.0 1.0 0.1
       Assert.equal 0.36 <<< round $ out (polynomial 2.0) 0.0 1.0 0.2
@@ -85,7 +93,7 @@ main = runTest do
       Assert.equal 0.9999 <<< round $ out (polynomial 4.0) 0.0 1.0 0.9
       Assert.equal 1.0 <<< round $ out (polynomial 4.0) 0.0 1.0 1.0
 
-    test "symmetric polynomial" do
+    test "symmetric" do
       Assert.equal 0.0 <<< round $ inAndOut (polynomial 2.0) 0.0 1.0 0.0
       Assert.equal 0.02 <<< round $ inAndOut (polynomial 2.0) 0.0 1.0 0.1
       Assert.equal 0.08 <<< round $ inAndOut (polynomial 2.0) 0.0 1.0 0.2
@@ -133,28 +141,28 @@ main = runTest do
       Assert.equal 0.843566 <<< round $ sine 0.0 1.0 0.9
       Assert.equal 1.0 <<< round $ sine 0.0 1.0 1.0
 
-    test "inverse sinusoidal" do
-      Assert.equal 0.0 <<< round $ (out sine) 0.0 1.0 0.0
-      Assert.equal 0.156434 <<< round $ (out sine) 0.0 1.0 0.1
-      Assert.equal 0.309017 <<< round $ (out sine) 0.0 1.0 0.2
-      Assert.equal 0.453990 <<< round $ (out sine) 0.0 1.0 0.3
-      Assert.equal 0.587785 <<< round $ (out sine) 0.0 1.0 0.4
-      Assert.equal 0.707107 <<< round $ (out sine) 0.0 1.0 0.5
-      Assert.equal 0.809017 <<< round $ (out sine) 0.0 1.0 0.6
-      Assert.equal 0.891007 <<< round $ (out sine) 0.0 1.0 0.7
-      Assert.equal 0.951057 <<< round $ (out sine) 0.0 1.0 0.8
-      Assert.equal 0.987688 <<< round $ (out sine) 0.0 1.0 0.9
-      Assert.equal 1.0 <<< round $ (out sine) 0.0 1.0 1.0
+    test "exponential" do
+      Assert.equal 0.0 <<< round $ exponential 0.0 1.0 0.0
+      Assert.equal 0.001953 <<< round $ exponential 0.0 1.0 0.1
+      Assert.equal 0.003906 <<< round $ exponential 0.0 1.0 0.2
+      Assert.equal 0.007813 <<< round $ exponential 0.0 1.0 0.3
+      Assert.equal 0.015625 <<< round $ exponential 0.0 1.0 0.4
+      Assert.equal 0.03125 <<< round $ exponential 0.0 1.0 0.5
+      Assert.equal 0.0625 <<< round $ exponential 0.0 1.0 0.6
+      Assert.equal 0.125 <<< round $ exponential 0.0 1.0 0.7
+      Assert.equal 0.25 <<< round $ exponential 0.0 1.0 0.8
+      Assert.equal 0.5 <<< round $ exponential 0.0 1.0 0.9
+      Assert.equal 1.0 <<< round $ exponential 0.0 1.0 1.0
 
-    test "symmetric sinusoidal" do
-      Assert.equal 0.0      <<< round $ (inAndOut sine) 0.0 1.0 0.0
-      Assert.equal 0.024472 <<< round $ (inAndOut sine) 0.0 1.0 0.1
-      Assert.equal 0.095492 <<< round $ (inAndOut sine) 0.0 1.0 0.2
-      Assert.equal 0.206107 <<< round $ (inAndOut sine) 0.0 1.0 0.3
-      Assert.equal 0.345492 <<< round $ (inAndOut sine) 0.0 1.0 0.4
-      Assert.equal 0.5      <<< round $ (inAndOut sine) 0.0 1.0 0.5
-      Assert.equal 0.654508 <<< round $ (inAndOut sine) 0.0 1.0 0.6
-      Assert.equal 0.793893 <<< round $ (inAndOut sine) 0.0 1.0 0.7
-      Assert.equal 0.904508 <<< round $ (inAndOut sine) 0.0 1.0 0.8
-      Assert.equal 0.975528 <<< round $ (inAndOut sine) 0.0 1.0 0.9
-      Assert.equal 1.0      <<< round $ (inAndOut sine) 0.0 1.0 1.0
+    test "circular" do
+      Assert.equal 0.0 <<< round $ circular 0.0 1.0 0.0
+      Assert.equal 0.005013 <<< round $ circular 0.0 1.0 0.1
+      Assert.equal 0.020204 <<< round $ circular 0.0 1.0 0.2
+      Assert.equal 0.046061 <<< round $ circular 0.0 1.0 0.3
+      Assert.equal 0.083485 <<< round $ circular 0.0 1.0 0.4
+      Assert.equal 0.133975 <<< round $ circular 0.0 1.0 0.5
+      Assert.equal 0.2 <<< round $ circular 0.0 1.0 0.6
+      Assert.equal 0.285857 <<< round $ circular 0.0 1.0 0.7
+      Assert.equal 0.4 <<< round $ circular 0.0 1.0 0.8
+      Assert.equal 0.564110 <<< round $ circular 0.0 1.0 0.9
+      Assert.equal 1.0 <<< round $ circular 0.0 1.0 1.0
