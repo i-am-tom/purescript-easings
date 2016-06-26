@@ -1,0 +1,12 @@
+language: node_js
+
+node_js:
+  - "5.0"
+  - "6.0"
+  - "6.1"
+
+before_script:
+  - npm install -g purescript pulp bower
+  - bower install
+
+script: pulp test tap
