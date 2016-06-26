@@ -44,3 +44,16 @@ elastic _ end 1.0 = end
 elastic start end progress =
   (start - end) * 2.0 ^ (10.0 * (progress - 1.0))
     * (sin $ pi * (2.0 * progress - 1.85) / 0.15)
+
+-- Back easing.
+back :: Easing
+back start end progress = start + (end - start)
+  * progress ^ 2.0 * (2.70158 * progress - 1.70158)
+
+-- Bounce easing.
+bounce :: Easing
+bounce start end progress
+  | progress < 1.0 / 2.75 = start + (end - start) * 7.5625 * progress ^ 2.0
+  | progress < 2.0 / 2.75 = start + (end - start) * (7.5625 * (progress - 1.5 / 2.75) ^ 2.0 + 0.75)
+	| progress < 2.5 / 2.75 = start + (end - start) * (7.5625 * (progress - 2.25 / 2.75) ^ 2.0 + 0.9375)
+	| otherwise = start + (end - start) * (7.5625 * (progress - 2.625 / 2.75) ^ 2.0 + 0.984375)

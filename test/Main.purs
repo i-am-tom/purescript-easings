@@ -4,7 +4,9 @@ import Prelude
 import Math as M
 
 import Main
-  ( circular
+  ( back
+  , bounce
+  , circular
   , elastic
   , exponential
   , inAndOut
@@ -158,14 +160,40 @@ main = runTest do
       Assert.equal 1.0      <<< round $ circular 0.0 1.0 1.0
 
     test "elastic" do
-      Assert.equal  0.0        <<< round $ elastic 0.0 1.0 0.0
-      Assert.equal  0.0        <<< round $ elastic 0.0 1.0 0.1
+      Assert.equal   0.0       <<< round $ elastic 0.0 1.0 0.0
+      Assert.equal   0.0       <<< round $ elastic 0.0 1.0 0.1
       Assert.equal (-0.003383) <<< round $ elastic 0.0 1.0 0.2
-      Assert.equal  0.006766   <<< round $ elastic 0.0 1.0 0.3
-      Assert.equal  0.0        <<< round $ elastic 0.0 1.0 0.4
+      Assert.equal   0.006766  <<< round $ elastic 0.0 1.0 0.3
+      Assert.equal   0.0       <<< round $ elastic 0.0 1.0 0.4
       Assert.equal (-0.027063) <<< round $ elastic 0.0 1.0 0.5
-      Assert.equal  0.054127   <<< round $ elastic 0.0 1.0 0.6
-      Assert.equal  0.0        <<< round $ elastic 0.0 1.0 0.7
+      Assert.equal   0.054127  <<< round $ elastic 0.0 1.0 0.6
+      Assert.equal   0.0       <<< round $ elastic 0.0 1.0 0.7
       Assert.equal (-0.216506) <<< round $ elastic 0.0 1.0 0.8
-      Assert.equal  0.433013   <<< round $ elastic 0.0 1.0 0.9
-      Assert.equal  1.0        <<< round $ elastic 0.0 1.0 1.0
+      Assert.equal   0.433013  <<< round $ elastic 0.0 1.0 0.9
+      Assert.equal   1.0       <<< round $ elastic 0.0 1.0 1.0
+
+    test "back" do
+      Assert.equal   0.0       <<< round $ back 0.0 1.0 0.0
+      Assert.equal (-0.014314) <<< round $ back 0.0 1.0 0.1
+      Assert.equal (-0.046451) <<< round $ back 0.0 1.0 0.2
+      Assert.equal (-0.0802)   <<< round $ back 0.0 1.0 0.3
+      Assert.equal (-0.099352) <<< round $ back 0.0 1.0 0.4
+      Assert.equal (-0.087698) <<< round $ back 0.0 1.0 0.5
+      Assert.equal (-0.029028) <<< round $ back 0.0 1.0 0.6
+      Assert.equal   0.092868  <<< round $ back 0.0 1.0 0.7
+      Assert.equal   0.294198  <<< round $ back 0.0 1.0 0.8
+      Assert.equal   0.591172  <<< round $ back 0.0 1.0 0.9
+      Assert.equal   1.0       <<< round $ back 0.0 1.0 1.0
+
+    test "bounce" do
+      Assert.equal 0.0       <<< round $ bounce 0.0 1.0 0.0
+      Assert.equal 0.075625  <<< round $ bounce 0.0 1.0 0.1
+      Assert.equal 0.3025    <<< round $ bounce 0.0 1.0 0.2
+      Assert.equal 0.680625  <<< round $ bounce 0.0 1.0 0.3
+      Assert.equal 0.91      <<< round $ bounce 0.0 1.0 0.4
+      Assert.equal 0.765625  <<< round $ bounce 0.0 1.0 0.5
+      Assert.equal 0.7725    <<< round $ bounce 0.0 1.0 0.6
+      Assert.equal 0.930625  <<< round $ bounce 0.0 1.0 0.7
+      Assert.equal 0.94      <<< round $ bounce 0.0 1.0 0.8
+      Assert.equal 0.988125  <<< round $ bounce 0.0 1.0 0.9
+      Assert.equal 1.0       <<< round $ bounce 0.0 1.0 1.0
