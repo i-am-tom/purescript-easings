@@ -7,7 +7,6 @@
     "output"
   ],
   "dependencies": {
-    "purescript-console": "^1.0.0",
     "purescript-math": "^2.0.0",
     "purescript-test-unit": "^7.0.0"
   },
