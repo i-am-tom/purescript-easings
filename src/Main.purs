@@ -36,3 +36,11 @@ circular :: Easing
 circular start end = (+) start
   <<< (*) (start - end)
   <<< \x -> (sqrt $ 1.0 - x ^ 2.0) - 1.0
+
+-- Elastic easing.
+elastic :: Easing
+elastic start _ 0.0 = start
+elastic _ end 1.0 = end
+elastic start end progress =
+  (start - end) * 2.0 ^ (10.0 * (progress - 1.0))
+    * (sin $ pi * (2.0 * progress - 1.85) / 0.15)
