@@ -6,10 +6,20 @@ Unlike the jQuery library, only the ease-in functions are explicitly given. In l
 
 ## API
 
-```purescript
-type Easing = Number -> Number -> Number -> Number
-```
+The `Easing` type is `Start -> End -> Progress -> Result`, where all four are `Number`s.
 
 | Function | Signature | Description |
 | -- | -- | -- |
-| `polynomial` |
+| `polynomial` | `Number -> Easing` | Takes the power to which to raise `progress`. |
+| `sine` | `Easing` | Standard sinusoidal easing. |
+| `exponential` | `Easing` | Exponential easing. |
+| `circular` | `Easing` | Follows a regular arc. |
+| `elastic` | `Easing` | 'Spring' effect around the end. |
+| `back` | `Easing` | Pulls back before transition. |
+| `bounce` | `Easing` | `in`/`out` are reversed. |
+
+All of these can be seen on [easings.net](http://www.easings.net), though do note that `bounce` has been flipped. This could change in the future, though I think it makes more sense to be this way round. Go figure.
+
+## Contributing
+
+Please submit PRs! All are welcome! I'll try to put some issues up to give some ideas.
