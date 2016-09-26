@@ -1,41 +1,45 @@
 module Main where
 
 import Prelude
-import Math (abs, cos, pi, pow, sin, sqrt)
+import Math (cos, pi, pow, sin, sqrt)
 
-type Easing = Number -> Number -> Number -> Number
+type Easing = Number -- Starting value
+           -> Number -- Ending value
+           -> Number -- 0-1 progress value
+           -> Number -- Result
 
-infix 9 pow as ^
+infixl 9 pow as ^
 
+-- Convert an in-easing to an out-easing.
 out :: Easing -> Easing
 out f start end progress = f end start (1.0 - progress)
 
+-- Convert an in-easing to an in-and-out easing.
 inAndOut :: Easing -> Easing
 inAndOut f start end progress
   | progress < 0.5 = f start (end / 2.0) (progress * 2.0)
   | otherwise      = (out f) ((start + end) / 2.0) end (2.0 * progress - 1.0)
 
--- Polynomial easing.
+-- Polynomial easing (given a power).
 polynomial :: Number -> Easing
 polynomial power start end progress =
   progress ^ power * (end - start) + start
 
 -- Sinusoidal easing.
 sine :: Easing
-sine start end = (+) end
-  <<< (*) (start - end)
-  <<< cos <<< (*) (pi / 2.0)
+sine start end progress = end + (start - end) * delta
+  where delta = cos $ progress * (pi / 2.0)
 
 -- Exponential easing.
 exponential :: Easing
-exponential start end 0.0 = start
-exponential start end progress = start + (end - start) * 2.0 ^ (10.0 * (progress - 1.0))
+exponential start end 0.0      = start
+exponential start end progress = start + (end - start) * delta
+  where delta = 2.0 ^ (10.0 * (progress - 1.0))
 
 -- Circular easing.
 circular :: Easing
-circular start end = (+) start
-  <<< (*) (start - end)
-  <<< \x -> (sqrt $ 1.0 - x ^ 2.0) - 1.0
+circular start end progress = start + (start - end) * delta
+  where delta = (sqrt $ 1.0 - progress ^ 2.0) - 1.0
 
 -- Elastic easing.
 elastic :: Easing

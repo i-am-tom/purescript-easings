@@ -4,16 +4,6 @@ import Prelude
 import Math as M
 
 import Main
-  ( back
-  , bounce
-  , circular
-  , elastic
-  , exponential
-  , inAndOut
-  , out
-  , polynomial
-  , sine
-  )
 
 import Test.Unit (suite, test)
 import Test.Unit.Main (runTest)
@@ -21,8 +11,8 @@ import Test.Unit.Assert as Assert
 
 -- Truncate float noise.
 round :: Number -> Number
-round = (flip (/) $ 1000000.0)
-  <<< M.round <<< (*) 1000000.0
+round x = (M.round $ x * p) / p
+  where p = 1000000.0
 
 main = runTest do
   suite "easings" do
