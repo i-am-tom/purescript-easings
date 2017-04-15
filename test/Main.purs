@@ -1,189 +1,97 @@
 module Test.Main where
 
 import Prelude
-import Math as M
-
 import Main
-
+import Data.Array ((..), (!!))
+import Data.Int (toNumber)
+import Data.Maybe (fromMaybe)
+import Data.Traversable (for)
+import Math as M
+import Test.Unit.Assert as Assert
+import Partial.Unsafe (unsafePartial)
 import Test.Unit (suite, test)
 import Test.Unit.Main (runTest)
-import Test.Unit.Assert as Assert
 
 -- Truncate float noise.
-round :: Number -> Number
 round x = (M.round $ x * p) / p
   where p = 1000000.0
+
+-- Check an easing against a list of expected values.
+check easing values = void $ for (0 .. 10) \n ->
+  let expected = fromMaybe 0.0 $ (values !! n)
+      actual = easing 0.0 1.0 (toNumber n / 10.0)
+  in Assert.equal expected $ round actual
 
 main = runTest do
   suite "easings" do
     test "polynomial" do
-      Assert.equal 0.0    <<< round $ polynomial 3.0 0.0 1.0 0.0
-      Assert.equal 0.001  <<< round $ polynomial 3.0 0.0 1.0 0.1
-      Assert.equal 0.008  <<< round $ polynomial 3.0 0.0 1.0 0.2
-      Assert.equal 0.027  <<< round $ polynomial 3.0 0.0 1.0 0.3
-      Assert.equal 0.064  <<< round $ polynomial 3.0 0.0 1.0 0.4
-      Assert.equal 0.125  <<< round $ polynomial 3.0 0.0 1.0 0.5
-      Assert.equal 0.216  <<< round $ polynomial 3.0 0.0 1.0 0.6
-      Assert.equal 0.343  <<< round $ polynomial 3.0 0.0 1.0 0.7
-      Assert.equal 0.512  <<< round $ polynomial 3.0 0.0 1.0 0.8
-      Assert.equal 0.729  <<< round $ polynomial 3.0 0.0 1.0 0.9
-      Assert.equal 1.0    <<< round $ polynomial 3.0 0.0 1.0 1.0
-      Assert.equal 0.0    <<< round $ polynomial 4.0 0.0 1.0 0.0
-      Assert.equal 0.0001 <<< round $ polynomial 4.0 0.0 1.0 0.1
-      Assert.equal 0.0016 <<< round $ polynomial 4.0 0.0 1.0 0.2
-      Assert.equal 0.0081 <<< round $ polynomial 4.0 0.0 1.0 0.3
-      Assert.equal 0.0256 <<< round $ polynomial 4.0 0.0 1.0 0.4
-      Assert.equal 0.0625 <<< round $ polynomial 4.0 0.0 1.0 0.5
-      Assert.equal 0.1296 <<< round $ polynomial 4.0 0.0 1.0 0.6
-      Assert.equal 0.2401 <<< round $ polynomial 4.0 0.0 1.0 0.7
-      Assert.equal 0.4096 <<< round $ polynomial 4.0 0.0 1.0 0.8
-      Assert.equal 0.6561 <<< round $ polynomial 4.0 0.0 1.0 0.9
-      Assert.equal 1.0    <<< round $ polynomial 4.0 0.0 1.0 1.0
+      -- Cubic
+      check (polynomial 3.0) [ 0.0,   0.001, 0.008, 0.027
+                             , 0.064, 0.125, 0.216, 0.343
+                             , 0.512, 0.729, 1.0 ]
+
+      -- Quartic
+      check (polynomial 4.0) [ 0.0,    0.0001, 0.0016, 0.0081
+                             , 0.0256, 0.0625, 0.1296, 0.2401
+                             , 0.4096, 0.6561, 1.0 ]
 
     test "inverse" do
-      Assert.equal 0.0    <<< round $ out (polynomial 2.0) 0.0 1.0 0.0
-      Assert.equal 0.19   <<< round $ out (polynomial 2.0) 0.0 1.0 0.1
-      Assert.equal 0.36   <<< round $ out (polynomial 2.0) 0.0 1.0 0.2
-      Assert.equal 0.51   <<< round $ out (polynomial 2.0) 0.0 1.0 0.3
-      Assert.equal 0.64   <<< round $ out (polynomial 2.0) 0.0 1.0 0.4
-      Assert.equal 0.75   <<< round $ out (polynomial 2.0) 0.0 1.0 0.5
-      Assert.equal 0.84   <<< round $ out (polynomial 2.0) 0.0 1.0 0.6
-      Assert.equal 0.91   <<< round $ out (polynomial 2.0) 0.0 1.0 0.7
-      Assert.equal 0.96   <<< round $ out (polynomial 2.0) 0.0 1.0 0.8
-      Assert.equal 0.99   <<< round $ out (polynomial 2.0) 0.0 1.0 0.9
-      Assert.equal 1.0    <<< round $ out (polynomial 2.0) 0.0 1.0 1.0
-      Assert.equal 0.0    <<< round $ out (polynomial 3.0) 0.0 1.0 0.0
-      Assert.equal 0.271  <<< round $ out (polynomial 3.0) 0.0 1.0 0.1
-      Assert.equal 0.488  <<< round $ out (polynomial 3.0) 0.0 1.0 0.2
-      Assert.equal 0.657  <<< round $ out (polynomial 3.0) 0.0 1.0 0.3
-      Assert.equal 0.784  <<< round $ out (polynomial 3.0) 0.0 1.0 0.4
-      Assert.equal 0.875  <<< round $ out (polynomial 3.0) 0.0 1.0 0.5
-      Assert.equal 0.936  <<< round $ out (polynomial 3.0) 0.0 1.0 0.6
-      Assert.equal 0.973  <<< round $ out (polynomial 3.0) 0.0 1.0 0.7
-      Assert.equal 0.992  <<< round $ out (polynomial 3.0) 0.0 1.0 0.8
-      Assert.equal 0.999  <<< round $ out (polynomial 3.0) 0.0 1.0 0.9
-      Assert.equal 1.0    <<< round $ out (polynomial 3.0) 0.0 1.0 1.0
-      Assert.equal 0.0    <<< round $ out (polynomial 4.0) 0.0 1.0 0.0
-      Assert.equal 0.3439 <<< round $ out (polynomial 4.0) 0.0 1.0 0.1
-      Assert.equal 0.5904 <<< round $ out (polynomial 4.0) 0.0 1.0 0.2
-      Assert.equal 0.7599 <<< round $ out (polynomial 4.0) 0.0 1.0 0.3
-      Assert.equal 0.8704 <<< round $ out (polynomial 4.0) 0.0 1.0 0.4
-      Assert.equal 0.9375 <<< round $ out (polynomial 4.0) 0.0 1.0 0.5
-      Assert.equal 0.9744 <<< round $ out (polynomial 4.0) 0.0 1.0 0.6
-      Assert.equal 0.9919 <<< round $ out (polynomial 4.0) 0.0 1.0 0.7
-      Assert.equal 0.9984 <<< round $ out (polynomial 4.0) 0.0 1.0 0.8
-      Assert.equal 0.9999 <<< round $ out (polynomial 4.0) 0.0 1.0 0.9
-      Assert.equal 1.0    <<< round $ out (polynomial 4.0) 0.0 1.0 1.0
+      -- Out quadratic
+      check (out $ polynomial 2.0) [ 0.0,  0.19, 0.36, 0.51
+                                   , 0.64, 0.75, 0.84, 0.91
+                                   , 0.96, 0.99, 1.0 ]
+
+
+      -- Out cubic
+      check (out $ polynomial 3.0) [ 0.0,   0.271, 0.488, 0.657
+                                   , 0.784, 0.875, 0.936, 0.973
+                                   , 0.992, 0.999, 1.0 ]
+
+      -- Out quartic
+      check (out $ polynomial 4.0) [ 0.0,    0.3439, 0.5904, 0.7599
+                                   , 0.8704, 0.9375, 0.9744, 0.9919
+                                   , 0.9984, 0.9999, 1.0 ]
 
     test "symmetric" do
-      Assert.equal 0.0    <<< round $ inAndOut (polynomial 2.0) 0.0 1.0 0.0
-      Assert.equal 0.02   <<< round $ inAndOut (polynomial 2.0) 0.0 1.0 0.1
-      Assert.equal 0.08   <<< round $ inAndOut (polynomial 2.0) 0.0 1.0 0.2
-      Assert.equal 0.18   <<< round $ inAndOut (polynomial 2.0) 0.0 1.0 0.3
-      Assert.equal 0.32   <<< round $ inAndOut (polynomial 2.0) 0.0 1.0 0.4
-      Assert.equal 0.5    <<< round $ inAndOut (polynomial 2.0) 0.0 1.0 0.5
-      Assert.equal 0.68   <<< round $ inAndOut (polynomial 2.0) 0.0 1.0 0.6
-      Assert.equal 0.82   <<< round $ inAndOut (polynomial 2.0) 0.0 1.0 0.7
-      Assert.equal 0.92   <<< round $ inAndOut (polynomial 2.0) 0.0 1.0 0.8
-      Assert.equal 0.98   <<< round $ inAndOut (polynomial 2.0) 0.0 1.0 0.9
-      Assert.equal 1.0    <<< round $ inAndOut (polynomial 2.0) 0.0 1.0 1.0
-      Assert.equal 0.0    <<< round $ inAndOut (polynomial 3.0) 0.0 1.0 0.0
-      Assert.equal 0.004  <<< round $ inAndOut (polynomial 3.0) 0.0 1.0 0.1
-      Assert.equal 0.032  <<< round $ inAndOut (polynomial 3.0) 0.0 1.0 0.2
-      Assert.equal 0.108  <<< round $ inAndOut (polynomial 3.0) 0.0 1.0 0.3
-      Assert.equal 0.256  <<< round $ inAndOut (polynomial 3.0) 0.0 1.0 0.4
-      Assert.equal 0.5    <<< round $ inAndOut (polynomial 3.0) 0.0 1.0 0.5
-      Assert.equal 0.744  <<< round $ inAndOut (polynomial 3.0) 0.0 1.0 0.6
-      Assert.equal 0.892  <<< round $ inAndOut (polynomial 3.0) 0.0 1.0 0.7
-      Assert.equal 0.968  <<< round $ inAndOut (polynomial 3.0) 0.0 1.0 0.8
-      Assert.equal 0.996  <<< round $ inAndOut (polynomial 3.0) 0.0 1.0 0.9
-      Assert.equal 1.0    <<< round $ inAndOut (polynomial 3.0) 0.0 1.0 1.0
-      Assert.equal 0.0    <<< round $ inAndOut (polynomial 4.0) 0.0 1.0 0.0
-      Assert.equal 0.0008 <<< round $ inAndOut (polynomial 4.0) 0.0 1.0 0.1
-      Assert.equal 0.0128 <<< round $ inAndOut (polynomial 4.0) 0.0 1.0 0.2
-      Assert.equal 0.0648 <<< round $ inAndOut (polynomial 4.0) 0.0 1.0 0.3
-      Assert.equal 0.2048 <<< round $ inAndOut (polynomial 4.0) 0.0 1.0 0.4
-      Assert.equal 0.5    <<< round $ inAndOut (polynomial 4.0) 0.0 1.0 0.5
-      Assert.equal 0.7952 <<< round $ inAndOut (polynomial 4.0) 0.0 1.0 0.6
-      Assert.equal 0.9352 <<< round $ inAndOut (polynomial 4.0) 0.0 1.0 0.7
-      Assert.equal 0.9872 <<< round $ inAndOut (polynomial 4.0) 0.0 1.0 0.8
-      Assert.equal 0.9992 <<< round $ inAndOut (polynomial 4.0) 0.0 1.0 0.9
-      Assert.equal 1.0    <<< round $ inAndOut (polynomial 4.0) 0.0 1.0 1.0
+      -- In-and-out quadratic
+      check (inAndOut $ polynomial 2.0) [ 0.0, 0.02, 0.08, 0.18
+                                        , 0.32, 0.5, 0.68, 0.82
+                                        , 0.92, 0.98, 1.0 ]
+
+      check (inAndOut $ polynomial 3.0) [ 0.0,   0.004, 0.032, 0.108
+                                        , 0.256, 0.5,   0.744, 0.892
+                                        , 0.968, 0.996, 1.0 ]
+
+      check (inAndOut $ polynomial 4.0) [ 0.0,    0.0008, 0.0128, 0.0648
+                                        , 0.2048, 0.5,    0.7952, 0.9352
+                                        , 0.9872, 0.9992, 1.0 ]
 
     test "sinusoidal" do
-      Assert.equal 0.0      <<< round $ sine 0.0 1.0 0.0
-      Assert.equal 0.012312 <<< round $ sine 0.0 1.0 0.1
-      Assert.equal 0.048943 <<< round $ sine 0.0 1.0 0.2
-      Assert.equal 0.108993 <<< round $ sine 0.0 1.0 0.3
-      Assert.equal 0.190983 <<< round $ sine 0.0 1.0 0.4
-      Assert.equal 0.292893 <<< round $ sine 0.0 1.0 0.5
-      Assert.equal 0.412215 <<< round $ sine 0.0 1.0 0.6
-      Assert.equal 0.54601  <<< round $ sine 0.0 1.0 0.7
-      Assert.equal 0.690983 <<< round $ sine 0.0 1.0 0.8
-      Assert.equal 0.843566 <<< round $ sine 0.0 1.0 0.9
-      Assert.equal 1.0      <<< round $ sine 0.0 1.0 1.0
+      check sine [ 0.0,      0.012312, 0.048943, 0.108993
+                 , 0.190983, 0.292893, 0.412215, 0.54601
+                 , 0.690983, 0.843566, 1.0 ]
 
     test "exponential" do
-      Assert.equal 0.0      <<< round $ exponential 0.0 1.0 0.0
-      Assert.equal 0.001953 <<< round $ exponential 0.0 1.0 0.1
-      Assert.equal 0.003906 <<< round $ exponential 0.0 1.0 0.2
-      Assert.equal 0.007813 <<< round $ exponential 0.0 1.0 0.3
-      Assert.equal 0.015625 <<< round $ exponential 0.0 1.0 0.4
-      Assert.equal 0.03125  <<< round $ exponential 0.0 1.0 0.5
-      Assert.equal 0.0625   <<< round $ exponential 0.0 1.0 0.6
-      Assert.equal 0.125    <<< round $ exponential 0.0 1.0 0.7
-      Assert.equal 0.25     <<< round $ exponential 0.0 1.0 0.8
-      Assert.equal 0.5      <<< round $ exponential 0.0 1.0 0.9
-      Assert.equal 1.0      <<< round $ exponential 0.0 1.0 1.0
+      check exponential [ 0.0,      0.001953, 0.003906, 0.007813
+                        , 0.015625, 0.03125,  0.0625,   0.125
+                        , 0.25, 0.5, 1.0 ]
 
     test "circular" do
-      Assert.equal 0.0      <<< round $ circular 0.0 1.0 0.0
-      Assert.equal 0.005013 <<< round $ circular 0.0 1.0 0.1
-      Assert.equal 0.020204 <<< round $ circular 0.0 1.0 0.2
-      Assert.equal 0.046061 <<< round $ circular 0.0 1.0 0.3
-      Assert.equal 0.083485 <<< round $ circular 0.0 1.0 0.4
-      Assert.equal 0.133975 <<< round $ circular 0.0 1.0 0.5
-      Assert.equal 0.2      <<< round $ circular 0.0 1.0 0.6
-      Assert.equal 0.285857 <<< round $ circular 0.0 1.0 0.7
-      Assert.equal 0.4      <<< round $ circular 0.0 1.0 0.8
-      Assert.equal 0.564110 <<< round $ circular 0.0 1.0 0.9
-      Assert.equal 1.0      <<< round $ circular 0.0 1.0 1.0
+      check circular [ 0.0,      0.005013, 0.020204, 0.046061
+                     , 0.083485, 0.133975, 0.2,      0.285857
+                     , 0.4, 0.564110, 1.0 ]
 
     test "elastic" do
-      Assert.equal   0.0       <<< round $ elastic 0.0 1.0 0.0
-      Assert.equal   0.0       <<< round $ elastic 0.0 1.0 0.1
-      Assert.equal (-0.003383) <<< round $ elastic 0.0 1.0 0.2
-      Assert.equal   0.006766  <<< round $ elastic 0.0 1.0 0.3
-      Assert.equal   0.0       <<< round $ elastic 0.0 1.0 0.4
-      Assert.equal (-0.027063) <<< round $ elastic 0.0 1.0 0.5
-      Assert.equal   0.054127  <<< round $ elastic 0.0 1.0 0.6
-      Assert.equal   0.0       <<< round $ elastic 0.0 1.0 0.7
-      Assert.equal (-0.216506) <<< round $ elastic 0.0 1.0 0.8
-      Assert.equal   0.433013  <<< round $ elastic 0.0 1.0 0.9
-      Assert.equal   1.0       <<< round $ elastic 0.0 1.0 1.0
+      check elastic [   0.0,         0.0,       (-0.003383), 0.006766
+                    ,   0.0,       (-0.027063),   0.054127,  0.0
+                    , (-0.216506),   0.433013,    1.0 ]
 
     test "back" do
-      Assert.equal   0.0       <<< round $ back 0.0 1.0 0.0
-      Assert.equal (-0.014314) <<< round $ back 0.0 1.0 0.1
-      Assert.equal (-0.046451) <<< round $ back 0.0 1.0 0.2
-      Assert.equal (-0.0802)   <<< round $ back 0.0 1.0 0.3
-      Assert.equal (-0.099352) <<< round $ back 0.0 1.0 0.4
-      Assert.equal (-0.087698) <<< round $ back 0.0 1.0 0.5
-      Assert.equal (-0.029028) <<< round $ back 0.0 1.0 0.6
-      Assert.equal   0.092868  <<< round $ back 0.0 1.0 0.7
-      Assert.equal   0.294198  <<< round $ back 0.0 1.0 0.8
-      Assert.equal   0.591172  <<< round $ back 0.0 1.0 0.9
-      Assert.equal   1.0       <<< round $ back 0.0 1.0 1.0
+      check back [   0.0,       (-0.014314), (-0.046451), (-0.0802)
+                 , (-0.099352), (-0.087698), (-0.029028),   0.092868
+                 ,   0.294198,    0.591172,    1.0 ]
 
     test "bounce" do
-      Assert.equal 0.0       <<< round $ bounce 0.0 1.0 0.0
-      Assert.equal 0.075625  <<< round $ bounce 0.0 1.0 0.1
-      Assert.equal 0.3025    <<< round $ bounce 0.0 1.0 0.2
-      Assert.equal 0.680625  <<< round $ bounce 0.0 1.0 0.3
-      Assert.equal 0.91      <<< round $ bounce 0.0 1.0 0.4
-      Assert.equal 0.765625  <<< round $ bounce 0.0 1.0 0.5
-      Assert.equal 0.7725    <<< round $ bounce 0.0 1.0 0.6
-      Assert.equal 0.930625  <<< round $ bounce 0.0 1.0 0.7
-      Assert.equal 0.94      <<< round $ bounce 0.0 1.0 0.8
-      Assert.equal 0.988125  <<< round $ bounce 0.0 1.0 0.9
-      Assert.equal 1.0       <<< round $ bounce 0.0 1.0 1.0
+      check bounce [ 0.0,  0.075625, 0.3025, 0.680625
+                   , 0.91, 0.765625, 0.7725, 0.930625
+                   , 0.94, 0.988125, 1.0 ]
