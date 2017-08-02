@@ -1,14 +1,13 @@
 module Test.Main where
 
 import Prelude
-import Main
+import Easing
 import Data.Array ((..), (!!))
 import Data.Int (toNumber)
 import Data.Maybe (fromMaybe)
 import Data.Traversable (for)
 import Math as M
 import Test.Unit.Assert as Assert
-import Partial.Unsafe (unsafePartial)
 import Test.Unit (suite, test)
 import Test.Unit.Main (runTest)
 
