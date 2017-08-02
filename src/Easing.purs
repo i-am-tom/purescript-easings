@@ -1,5 +1,7 @@
 module Easing
-  ( out
+  ( Easing
+
+  , out
   , inAndOut
 
   , polynomial
