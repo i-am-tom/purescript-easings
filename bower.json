@@ -1,0 +1,22 @@
+{
+  "name": "purescript-easings",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-prelude": "^3.1.0",
+    "purescript-math": "^2.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/i-am-tom/purescript-easings.git"
+  },
+  "devDependencies": {
+    "purescript-psci-support": "^3.0.0",
+    "purescript-test-unit": "^11.0.0"
+  }
+}
